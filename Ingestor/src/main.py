@@ -32,7 +32,8 @@ def rabbitmq_consumer():
     channel = rabbitmq_connection.channel()
     channel.queue_declare(queue='data_queue')
 
-    def callback(ch, method, properties, body):
+    # def callback(ch, method, properties, body):
+    def callback(_, _2, _3, body):
         data = json.loads(body)
         store_data_in_redis(data['key'], data['value'])
 

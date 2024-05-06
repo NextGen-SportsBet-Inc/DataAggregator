@@ -7,3 +7,6 @@ class HockeyWrapper(BaseWrapper):
 
     def collect_data(self):
         pass
+
+    def publish_data(self):
+        pass
