@@ -1,19 +1,19 @@
 import json
 import uvicorn
-from fastapi import FastAPI, BackgroundTasks
+from fastapi import (FastAPI,
+                     BackgroundTasks)
+from Ingestor.src.db.redis_database import redis_client
+from Ingestor.src.queue.rabbit_mq import rabbitmq_connection
 
-from src.db.redis_database import redis_client
-from src.queue.rabbit_mq import rabbitmq_connection
-
-tags_metadata = []
-description = "Microservice responsible for the data collection"
+_openapi_tags = []
+_description = "Microservice responsible for the data collection"
 
 app = FastAPI(openapi_url="/api/openapi.json",
               docs_url="/api/docs",
               redoc_url="/api/redoc",
               title="Data Aggregator API",
-              description=description,
-              openapi_tags=tags_metadata,
+              description=_description,
+              openapi_tags=_openapi_tags,
               version="1.0.0",
               contact={
                   "name": "NextGen",
