@@ -1,6 +1,9 @@
+import json
 import os
-from dotenv import load_dotenv
 from enum import Enum
+from typing import Any
+
+from dotenv import load_dotenv
 
 load_dotenv(".env")
 
@@ -14,7 +17,7 @@ class SportKey(Enum):
 
 class BaseWrapperUtils:
     def __init__(self, sport: SportKey):
-
+        
         # RabbitMQ
         self._exchange = None
         self._rabbitmq_channel = None
@@ -33,7 +36,8 @@ class BaseWrapperUtils:
         }
 
     def init_client(self):
-        from pika import PlainCredentials, ConnectionParameters, BlockingConnection
+        from pika import (BlockingConnection, ConnectionParameters,
+                          PlainCredentials)
 
         rabbitmq_credentials = PlainCredentials(self._rabbitmq_user, self._rabbitmq_pass)
         rabbitmq_parameters = ConnectionParameters(self._rabbitmq_host, int(self._rabbitmq_port), '/', rabbitmq_credentials)
@@ -45,28 +49,42 @@ class BaseWrapperUtils:
             raise ValueError("RabbitMQ channel is not initialized. Call init_client() first.")
 
         self._exchange = exchange
-        self._rabbitmq_channel.exchange_declare(exchange=exchange, exchange_type='topic')
+        self._rabbitmq_channel.exchange_declare(exchange=self._exchange, exchange_type='topic')
+        
+    def declare_queue(self, queue: str, routing_key: str):
+        if not self._rabbitmq_channel:
+            raise ValueError("RabbitMQ channel exchange is not declared. Call exchange_declare() first, passing the exchange.")
+        
+        # Declare the queue for publishing a limited number of messages
+        max_messages_in_queue = 1
+        self._rabbitmq_channel.queue_declare(queue=queue, durable=True, arguments={"x-max-length": max_messages_in_queue})
+        
+        # Bind the queue to the exchange with the routing key
+        self._rabbitmq_channel.queue_bind(exchange=self._exchange, queue=queue, routing_key=routing_key)
 
-    def publish_to(self, message: str):
+        print(f"Queue '{queue}' declared and bound to exchange '{self._exchange}' with routing key '{routing_key}'")
+
+    def publish_to(self, message: Any, routing_key: str = ''):
         if not self._exchange:
-            raise ValueError(
-                "RabbitMQ channel exchange is not declared. Call exchange_declare() first, passing the exchange.")
+            raise ValueError("RabbitMQ channel exchange is not declared. Call exchange_declare() first, passing the exchange.")
+        
+        # Converts the dictionary (message) to a JSON string
+        message_bytes = json.dumps(message).encode('utf-8')
 
-        # Publish the message to the specified topic
         self._rabbitmq_channel.basic_publish(
             exchange=self._exchange,
-            routing_key='',  # Routing key is set to the empty string for topic exchange
-            body=message
+            routing_key=routing_key,
+            body=message_bytes
         )
 
-        print(f"\tSent message to topic '{self._exchange}': {message}")  # TODO: Change to logging
+        print(f"Sent message to topic '{self._exchange}'")  # TODO: Change to logging
 
     def call_api(self, url: str):
         import requests
 
         url = f"https://{self._api_host}/{url}"
 
-        print(f"\tCall API: {url}")  # TODO: Simplify this step, log and pass the url to the request get
+        print(f"Call API: {url}")  # TODO: Simplify this step, log and pass the url to the request get
 
         response = requests.get(url, headers=self._api_request_headers)
         return response.json()

@@ -1,15 +1,18 @@
 from typing import Any
 
-from Wrappers.BaseWrapper.base_wrapper import BaseWrapper
-from Wrappers.BaseWrapper.base_wrapper_utils import SportKey
+from BaseWrapper.base_wrapper import Wrapper
+from BaseWrapper.base_wrapper_utils import SportKey
 
 
-class FootballWrapper(BaseWrapper):
+class FootballWrapper(Wrapper):
     def __init__(self):
-        super(SportKey.FOOTBALL)
+        super().__init__("collected_data/football", SportKey.FOOTBALL)
+        
+    def declare_queue(self, queue: str, routing_key: str):
+        return super().declare_queue(queue, routing_key)
 
     def collect_data(self, url: str):
-        super().collect_data(url)
+        return super().collect_data(url)
 
-    def publish_data(self, data: Any):
-        super().publish_data(data)
+    def publish_data(self, data: Any, routing_key: str):
+        return super().publish_data(data, routing_key)

@@ -1,20 +1,20 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from Wrappers.BaseWrapper.base_wrapper import Wrapper
-from Wrappers.BaseWrapper.base_wrapper_utils import SportKey
+from BaseWrapper.base_wrapper import Wrapper
+from BaseWrapper.base_wrapper_utils import SportKey
 
 
 class TestBaseWrapper(unittest.TestCase):
-    @patch('Wrappers.BaseWrapper.base_wrapper_utils.BaseWrapperUtils.init_client')
-    @patch('Wrappers.BaseWrapper.base_wrapper_utils.BaseWrapperUtils.exchange_declare')
+    @patch('BaseWrapper.base_wrapper_utils.BaseWrapperUtils.init_client')
+    @patch('BaseWrapper.base_wrapper_utils.BaseWrapperUtils.exchange_declare')
     def setUp(self, mock_init_client, mock_exchange_declare):
         # Mocking the BaseWrapperUtils class
         mock_init_client.return_value = MagicMock()
         mock_exchange_declare.return_value = MagicMock()
         self.wrapper = Wrapper("exchange", SportKey.FOOTBALL)
 
-    @patch('Wrappers.BaseWrapper.base_wrapper_utils.BaseWrapperUtils.call_api')
+    @patch('BaseWrapper.base_wrapper_utils.BaseWrapperUtils.call_api')
     def test_collect_data(self, mock_call_api):
         test_url = 'url'
 
@@ -24,7 +24,7 @@ class TestBaseWrapper(unittest.TestCase):
         # Assert that collect_data method returns collected_data
         self.assertEqual(result, 'collected_data')
 
-    @patch('Wrappers.BaseWrapper.base_wrapper_utils.BaseWrapperUtils.publish_to')
+    @patch('BaseWrapper.base_wrapper_utils.BaseWrapperUtils.publish_to')
     def test_publish_data(self, mock_publish_to):
         test_data = 'data'
 

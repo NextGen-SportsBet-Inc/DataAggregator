@@ -15,7 +15,6 @@ RABBITMQ_PORT = os.getenv("RABBITMQ_PORT")
 rabbitmq_credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
 rabbitmq_parameters = pika.ConnectionParameters(RABBITMQ_HOST, int(RABBITMQ_PORT), '/', rabbitmq_credentials)
 rabbitmq_connection = pika.BlockingConnection(rabbitmq_parameters)
-rabbitmq_channel = rabbitmq_connection.channel()
 
 
 def ensure_connection():
