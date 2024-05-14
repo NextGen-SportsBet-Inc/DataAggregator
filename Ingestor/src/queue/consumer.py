@@ -1,6 +1,7 @@
 
 import json
 import logging
+import time
 from Ingestor.src.queue.rabbit_mq import rabbitmq_connection
 from Ingestor.src.db.redis_database import redis_client
 
@@ -30,14 +31,27 @@ class RabbitMQConsumer():
     def on_message_callback(self, ch, method, properties, body):
         """Callback function that handles message processing and storing data into Redis."""
         try:
-            data = json.loads(body)
+            content = json.loads(body)
+            
+            data = {
+                'timestamp': time.time(),
+                'exchange': self.exchange,
+                'queue': self.queue,
+                'channel': ch,
+                'method': method,
+                'properties': properties,
+                'content': content
+            }
+            
             print(f"Received message from {self.exchange}: {data}")
 
             redis_client.set(self.queue, json.dumps(data))
 
             print(f"Data stored in Redis under key: {self.queue}")
+
         except json.JSONDecodeError as e:
             logging.error("Failed to decode JSON data: %s", e)
+            
         except Exception as e:
             logging.error("Failed to store data in Redis: %s", e)
         

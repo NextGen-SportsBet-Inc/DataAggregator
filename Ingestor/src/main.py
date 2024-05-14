@@ -1,9 +1,11 @@
 import threading
-import uvicorn
-from fastapi import FastAPI
 
-from Ingestor.src.db.redis_database import redis_client
+import uvicorn
+from fastapi import APIRouter, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
 from Ingestor.src.queue.consumer import RabbitMQConsumer
+
 
 # Run the consumer
 def run_consumer(exchange, queue):
@@ -42,9 +44,20 @@ app = FastAPI(openapi_url="/api/openapi.json",
               },
               )
 
-# TODO: Create a endpoint for data checkups
-# @app.get("/")
-# async def read_root():
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+router = APIRouter()
+app.include_router(prefix="/api", router=router)
+
+@router.get("/")
+async def root():
+    return {"message": "Hello World"}
 
 if __name__ == "__main__":
     
