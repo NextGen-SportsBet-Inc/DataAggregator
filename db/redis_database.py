@@ -1,4 +1,5 @@
 import os
+
 import redis
 from dotenv import load_dotenv
 
@@ -21,6 +22,10 @@ def ensure_connections():
     :return: None
     """
     if redis_client.ping():
+        # TODO: Change to logging
         print("Connected to Redis")
+        return redis_client
     else:
+        # TODO: Change to logging
         print("Could not connect to Redis")
+        return None

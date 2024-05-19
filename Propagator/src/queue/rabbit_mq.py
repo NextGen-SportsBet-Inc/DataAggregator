@@ -7,10 +7,10 @@ from dotenv import load_dotenv
 load_dotenv(".env")
 
 # RabbitMQ settings
-RABBITMQ_USER = os.getenv("WRAPPERS_MQ_DEFAULT_USER")
-RABBITMQ_PASS = os.getenv("WRAPPERS_MQ_DEFAULT_PASS")
-RABBITMQ_HOST = os.getenv("WRAPPERS_MQ_HOST")
-RABBITMQ_PORT = os.getenv("WRAPPERS_MQ_PORT")
+RABBITMQ_USER = os.getenv("MAIN_MQ_DEFAULT_USER")
+RABBITMQ_PASS = os.getenv("MAIN_MQ_DEFAULT_PASS")
+RABBITMQ_HOST = os.getenv("MAIN_MQ_HOST")
+RABBITMQ_PORT = os.getenv("MAIN_MQ_PORT")
 
 # Initialize RabbitMQ connection
 rabbitmq_credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)

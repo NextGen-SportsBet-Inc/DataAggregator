@@ -21,10 +21,10 @@ class BaseWrapperUtils:
         # RabbitMQ
         self._exchange = None
         self._rabbitmq_channel = None
-        self._rabbitmq_user = os.getenv("RABBITMQ_DEFAULT_USER")
-        self._rabbitmq_pass = os.getenv("RABBITMQ_DEFAULT_PASS")
-        self._rabbitmq_host = os.getenv("RABBITMQ_HOST")
-        self._rabbitmq_port = os.getenv("RABBITMQ_PORT")
+        self._rabbitmq_user = os.getenv("WRAPPERS_MQ_DEFAULT_USER")
+        self._rabbitmq_pass = os.getenv("WRAPPERS_MQ_DEFAULT_PASS")
+        self._rabbitmq_host = os.getenv("WRAPPERS_MQ_HOST")
+        self._rabbitmq_port = os.getenv("WRAPPERS_MQ_PORT")
 
         # RAPID API
         self.sport = sport.name
@@ -62,6 +62,7 @@ class BaseWrapperUtils:
         # Bind the queue to the exchange with the routing key
         self._rabbitmq_channel.queue_bind(exchange=self._exchange, queue=queue, routing_key=routing_key)
 
+        # TODO: Change to logging
         print(f"Queue '{queue}' declared and bound to exchange '{self._exchange}' with routing key '{routing_key}'")
 
     def publish_to(self, message: Any, routing_key: str = ''):
@@ -77,14 +78,16 @@ class BaseWrapperUtils:
             body=message_bytes
         )
 
-        print(f"Sent message to topic '{self._exchange}'")  # TODO: Change to logging
+        # TODO: Change to logging
+        print(f"Sent message to topic '{self._exchange}'")
 
     def call_api(self, url: str):
         import requests
 
         url = f"https://{self._api_host}/{url}"
 
-        print(f"Call API: {url}")  # TODO: Simplify this step, log and pass the url to the request get
+        # TODO: Change to logging
+        print(f"Call API: {url}")  # TODO: Simplify this step and pass the url to the request get
 
         response = requests.get(url, headers=self._api_request_headers)
         return response.json()
