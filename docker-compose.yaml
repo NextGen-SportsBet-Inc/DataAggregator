@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  main_mq:
+    image: rabbitmq:3-management
+    ports:
+      - "5673:5672"  # AMQP protocol for the main message queue
+      - "15673:15672"  # Management interface for the main message queue
+    volumes:
+      - main_rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${MAIN_MQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${MAIN_MQ_DEFAULT_PASS}
+    restart: unless-stopped
+
+  wrappers_mq:
+    image: rabbitmq:3-management
+    ports:
+      - "5674:5672"  # AMQP protocol for the wrappers message queue
+      - "15674:15672"  # Management interface for the wrappers message queue
+    volumes:
+      - wrappers_rabbitmq_data:/var/lib/rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=${WRAPPERS_MQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${WRAPPERS_MQ_DEFAULT_PASS}
+    restart: unless-stopped
+
+  redis:
+    image: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    restart: unless-stopped
+
+volumes:
+  main_rabbitmq_data:
+    driver: local
+  wrappers_rabbitmq_data:
+    driver: local
+  redis_data:
+    driver: local
