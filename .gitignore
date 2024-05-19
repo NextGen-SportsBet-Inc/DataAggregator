@@ -161,3 +161,6 @@ cython_debug/
 
 # Environment File
 .env
+
+# Test Folder for personal use
+testing/
