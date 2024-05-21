@@ -11,9 +11,10 @@ services:
       - RABBITMQ_DEFAULT_PASS=${MAIN_MQ_DEFAULT_PASS}
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 5
+    restart: unless-stopped
 
   wrappers_mq:
     image: rabbitmq:3-management
@@ -27,9 +28,10 @@ services:
       - RABBITMQ_DEFAULT_PASS=${WRAPPERS_MQ_DEFAULT_PASS}
     healthcheck:
       test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 5
+    restart: unless-stopped
 
   redis:
     image: redis
@@ -38,13 +40,36 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
-    restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
-      interval: 30s
+      interval: 10s
       timeout: 10s
       retries: 5
+    restart: unless-stopped
 
+
+  ingestor:
+    build:
+      context: ./Ingestor
+      dockerfile: Dockerfile
+    command: ["python", "src/main.py"]
+    volumes:
+      - ./Ingestor:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - WRAPPERS_MQ_DEFAULT_USER=${WRAPPERS_MQ_DEFAULT_USER}
+      - WRAPPERS_MQ_DEFAULT_PASS=${WRAPPERS_MQ_DEFAULT_PASS}
+      - WRAPPERS_MQ_HOST=${WRAPPERS_MQ_HOST}
+      - WRAPPERS_MQ_PORT=${WRAPPERS_MQ_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      wrappers_mq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
   propagator:
     build:
@@ -68,6 +93,24 @@ services:
       redis:
         condition: service_healthy
     restart: unless-stopped
+
+  # wrappers:
+  #   build:
+  #     context: ./Wrappers
+  #     dockerfile: Dockerfile
+  #   command: ["python", "src/main.py"]
+  #   volumes:
+  #     - ./Wrappers:/app
+  #   environment:
+  #     - PYTHONUNBUFFERED=1
+  #     - WRAPPERS_MQ_DEFAULT_USER=${WRAPPERS_MQ_DEFAULT_USER}
+  #     - WRAPPERS_MQ_DEFAULT_PASS=${WRAPPERS_MQ_DEFAULT_PASS}
+  #     - WRAPPERS_MQ_HOST=${WRAPPERS_MQ_HOST}
+  #     - WRAPPERS_MQ_PORT=${WRAPPERS_MQ_PORT}
+  #   depends_on:
+  #     wrappers_mq:
+  #       condition: service_healthy
+  #   restart: unless-stopped
 
 volumes:
   main_rabbitmq_data:

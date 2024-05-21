@@ -2,8 +2,8 @@ import json
 import logging
 import time
 
-from Ingestor.src.db.redis_database import redis_client
-from rabbit_mq import rabbitmq_connection
+from db.redis_database import redis_client
+from rabbitmq.rabbit_mq import rabbitmq_connection
 
 class RabbitMQConsumer:
     

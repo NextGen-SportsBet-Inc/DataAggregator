@@ -1,11 +1,12 @@
-# Ingestor Dockerfile
-FROM python:3.12-alpine
+# Propagator Dockerfile
+FROM python:3.10-alpine
 
-WORKDIR /app/Ingestor
+WORKDIR /app
 
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r /app/requirements.txt
+COPY . /app
 
-COPY . /app/Ingestor
+COPY requirements.txt /app
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 CMD ["python", "src/main.py"]
