@@ -47,7 +47,6 @@ services:
       retries: 5
     restart: unless-stopped
 
-
   ingestor:
     build:
       context: ./Ingestor
@@ -94,23 +93,23 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
-  # wrappers:
-  #   build:
-  #     context: ./Wrappers
-  #     dockerfile: Dockerfile
-  #   command: ["python", "src/main.py"]
-  #   volumes:
-  #     - ./Wrappers:/app
-  #   environment:
-  #     - PYTHONUNBUFFERED=1
-  #     - WRAPPERS_MQ_DEFAULT_USER=${WRAPPERS_MQ_DEFAULT_USER}
-  #     - WRAPPERS_MQ_DEFAULT_PASS=${WRAPPERS_MQ_DEFAULT_PASS}
-  #     - WRAPPERS_MQ_HOST=${WRAPPERS_MQ_HOST}
-  #     - WRAPPERS_MQ_PORT=${WRAPPERS_MQ_PORT}
-  #   depends_on:
-  #     wrappers_mq:
-  #       condition: service_healthy
-  #   restart: unless-stopped
+  wrappers:
+    build:
+      context: ./Wrappers
+      dockerfile: Dockerfile
+    command: ["python", "src/main.py"]
+    volumes:
+      - ./Wrappers:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - WRAPPERS_MQ_DEFAULT_USER=${WRAPPERS_MQ_DEFAULT_USER}
+      - WRAPPERS_MQ_DEFAULT_PASS=${WRAPPERS_MQ_DEFAULT_PASS}
+      - WRAPPERS_MQ_HOST=${WRAPPERS_MQ_HOST}
+      - WRAPPERS_MQ_PORT=${WRAPPERS_MQ_PORT}
+    depends_on:
+      wrappers_mq:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   main_rabbitmq_data:

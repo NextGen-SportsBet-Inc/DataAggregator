@@ -1,7 +1,7 @@
 from typing import Any
 
-from Wrappers.src.BaseWrapper.base_wrapper import Wrapper
-from Wrappers.src.BaseWrapper.base_wrapper_utils import SportKey
+from BaseWrapper.base_wrapper import Wrapper
+from BaseWrapper.base_wrapper_utils import SportKey
 
 
 class FootballWrapper(Wrapper):

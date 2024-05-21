@@ -17,16 +17,19 @@ def run_publisher(exchange, queue, routing_key):
     last_value = None
     while True:
         try:
-            current_value = json.loads(redis_client.get(queue))
+            data = redis_client.get(queue)
+            
+            if data is not None:
+                current_value = json.loads(data)
 
-            if current_value != last_value:
-                # TODO: Change to logging
-                print(f"Value for {queue} changed")
+                if current_value != last_value:
+                    # TODO: Change to logging
+                    print(f"Value for {queue} changed")
 
-                publisher.publish_message(current_value, routing_key)
-                last_value = current_value
+                    publisher.publish_message(current_value, routing_key)
+                    last_value = current_value
 
-            time.sleep(1)  # Check every second
+                time.sleep(1)  # Check every second
 
         except Exception as e:
             # TODO: Change to logging

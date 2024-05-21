@@ -1,11 +1,12 @@
 # Wrappers Dockerfile
-FROM python:3.12-alpine
+FROM python:3.10-alpine
 
-WORKDIR /app/Wrappers
+WORKDIR /app
 
-COPY requirements.txt /app/
-RUN pip install --no-cache-dir -r /app/requirements.txt
+COPY . /app
 
-COPY . /app/Wrappers
+COPY requirements.txt /app
+
+RUN pip install --no-cache-dir -r requirements.txt
 
 CMD ["python", "src/main.py"]

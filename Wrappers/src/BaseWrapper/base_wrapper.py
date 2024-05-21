@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any
-from Wrappers.src.BaseWrapper.base_wrapper_utils import BaseWrapperUtils, SportKey
+from BaseWrapper.base_wrapper_utils import BaseWrapperUtils, SportKey
 
 
 class BaseWrapper(metaclass=ABCMeta):
