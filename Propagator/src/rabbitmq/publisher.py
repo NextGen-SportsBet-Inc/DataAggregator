@@ -3,6 +3,7 @@ import pika
 
 from rabbitmq.rabbit_mq import rabbitmq_connection
 
+
 class RabbitMQPublisher:
 
     def __init__(self, exchange: str):

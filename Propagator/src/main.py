@@ -7,18 +7,19 @@ from db.redis_database import redis_client
 
 print("Propagator started")
 
+
 # Run the publisher
 def run_publisher(exchange, queue, routing_key):
     publisher = RabbitMQPublisher(exchange)
     publisher.declare_queue(queue=queue, routing_key=routing_key)
-    
+
     print(f"Started publisher for exchange: {exchange}, queue: {queue}, routing_key: {routing_key}")
 
     last_value = None
     while True:
         try:
             data = redis_client.get(queue)
-            
+
             if data is not None:
                 current_value = json.loads(data)
 
@@ -44,7 +45,7 @@ def main():
         ('football', 'football_live_odds', 'odds.#'),
     ]
 
-    for exchange, queue, routing_key in consumer_configs:        
+    for exchange, queue, routing_key in consumer_configs:
         thread = threading.Thread(target=run_publisher, args=(exchange, queue, routing_key))
         thread.start()
 
