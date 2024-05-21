@@ -12,6 +12,11 @@ RABBITMQ_PASS = os.getenv("WRAPPERS_MQ_DEFAULT_PASS")
 RABBITMQ_HOST = os.getenv("WRAPPERS_MQ_HOST")
 RABBITMQ_PORT = os.getenv("WRAPPERS_MQ_PORT")
 
+print(RABBITMQ_USER)
+print(RABBITMQ_PASS)
+print(RABBITMQ_HOST)
+print(RABBITMQ_PORT)
+
 # Initialize RabbitMQ connection
 rabbitmq_credentials = pika.PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
 rabbitmq_parameters = pika.ConnectionParameters(RABBITMQ_HOST, int(RABBITMQ_PORT), '/', rabbitmq_credentials)

@@ -14,5 +14,5 @@ class BasketballWrapper(BaseWrapper):
     def collect_data(self, url: str):
         return super().collect_data(url)
 
-    def publish_data(self, data: Any, routing_key: str):
+    def publish_data(self, data: Any, routing_key: str = ''):
         return super().publish_data(data, routing_key)
