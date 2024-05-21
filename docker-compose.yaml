@@ -1,29 +1,35 @@
-version: '3.8'
-
 services:
   main_mq:
     image: rabbitmq:3-management
     ports:
-      - "5673:5672"  # AMQP protocol for the main message queue
-      - "15673:15672"  # Management interface for the main message queue
+      - "5673:5672"
+      - "15673:15672"
     volumes:
       - main_rabbitmq_data:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=${MAIN_MQ_DEFAULT_USER}
       - RABBITMQ_DEFAULT_PASS=${MAIN_MQ_DEFAULT_PASS}
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   wrappers_mq:
     image: rabbitmq:3-management
     ports:
-      - "5674:5672"  # AMQP protocol for the wrappers message queue
-      - "15674:15672"  # Management interface for the wrappers message queue
+      - "5674:5672"
+      - "15674:15672"
     volumes:
       - wrappers_rabbitmq_data:/var/lib/rabbitmq
     environment:
       - RABBITMQ_DEFAULT_USER=${WRAPPERS_MQ_DEFAULT_USER}
       - RABBITMQ_DEFAULT_PASS=${WRAPPERS_MQ_DEFAULT_PASS}
-    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "rabbitmq-diagnostics -q status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   redis:
     image: redis
@@ -32,6 +38,35 @@ services:
     volumes:
       - redis_data:/data
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+
+  propagator:
+    build:
+      context: ./Propagator
+      dockerfile: Dockerfile
+    command: ["python", "src/main.py"]
+    volumes:
+      - ./Propagator:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MAIN_MQ_DEFAULT_USER=${MAIN_MQ_DEFAULT_USER}
+      - MAIN_MQ_DEFAULT_PASS=${MAIN_MQ_DEFAULT_PASS}
+      - MAIN_MQ_HOST=${MAIN_MQ_HOST}
+      - MAIN_MQ_PORT=${MAIN_MQ_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    depends_on:
+      main_mq:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

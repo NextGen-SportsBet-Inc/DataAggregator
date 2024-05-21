@@ -1,6 +1,6 @@
 from abc import ABCMeta, abstractmethod
 from typing import Any
-from BaseWrapper.base_wrapper_utils import BaseWrapperUtils, SportKey
+from Wrappers.src.BaseWrapper.base_wrapper_utils import BaseWrapperUtils, SportKey
 
 
 class BaseWrapper(metaclass=ABCMeta):
@@ -20,7 +20,7 @@ class BaseWrapper(metaclass=ABCMeta):
         pass
 
     @abstractmethod
-    def publish_data(self, data: Any) -> Any:
+    def publish_data(self, data: Any, routing_key: str = '') -> Any:
         pass
 
 

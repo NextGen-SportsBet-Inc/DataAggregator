@@ -2,11 +2,10 @@ import json
 import logging
 import time
 
-from db.redis_database import redis_client
-from Ingestor.src.queue.rabbit_mq import rabbitmq_connection
+from Ingestor.src.db.redis_database import redis_client
+from rabbit_mq import rabbitmq_connection
 
-
-class RabbitMQConsumer():
+class RabbitMQConsumer:
     
     def __init__(self, exchange: str, queue: str):
         self.channel = rabbitmq_connection.channel()

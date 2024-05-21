@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import MagicMock, patch
 
-from BaseWrapper.base_wrapper import Wrapper
-from BaseWrapper.base_wrapper_utils import SportKey
+from Wrappers.src.BaseWrapper import Wrapper
+from Wrappers.src.BaseWrapper.base_wrapper_utils import SportKey
 
 
 class TestBaseWrapper(unittest.TestCase):
@@ -29,7 +29,7 @@ class TestBaseWrapper(unittest.TestCase):
         test_data = 'data'
 
         mock_publish_to.return_value = 'response'
-        result = self.wrapper.publish_data(test_data)
+        result = self.wrapper.publish_data(test_data, )
 
         # Assert that publish_data method returns response
         self.assertEqual(result, 'response')
