@@ -1,5 +1,5 @@
 # DataAggregator
-Microservice responsible for the data collection
+Microservice responsible for the data collection.
 
 # How to run
 
